@@ -87,7 +87,14 @@ CH2_bend_1,CH_bend,1450,1445,1455,"CH2 scissoring / CH3 bending",Fields2016_phd_
 tyr_ring_1,aromatic,830,825,835,"tyrosine ring mode",Fields2016_phd_table3_1
 ```
 
-### 4. General rules
+### 4. Add additional bands
+
+Using the table at the link below, check whether there are any **extra bands** that do not already appear in the thesis table.  
+For any new bands you find, add corresponding rows to the CSV in the same format.
+
+<https://www.nature.com/articles/s41598-019-43636-2/tables/1>
+
+### 5. General rules
 
 * One **row per band** listed in Table 3.1.
 * Don’t leave cells blank; if something is genuinely unknown, write `unknown`.
