@@ -106,3 +106,98 @@ For any new bands you find, add corresponding rows to the CSV in the same format
   * and optionally an `.xlsx` version if you used Excel (but the CSV is what the code will read).
 
 
+additional links and info for next step
+
+https://www.mdpi.com/1422-0067/24/19/14748
+
+components: elastin, keratin, nucleus, triolein, ceramide, melanin, water. 
+
+approximate values
+
+* 825–860 → `tyrosine_aromatic`
+* 995–1015 → `phenylalanine_aromatic`
+* 1230–1310 → `amide_III`
+* 1430–1480 → `CH_bend`
+* 1630–1680 → `amide_I`
+* 1550–1615 → `other_aromatic`
+
+These are vibration types; different bases just have different *weights* on them.
+
+**Collagen** (triple-helix protein) ([MDPI][1])
+
+* 825–860: Pro/HyPro / Tyr ring → `tyrosine_aromatic`
+* 938–940: C–C stretch of collagen backbone (falls near your “phenylalanine_aromatic” window but physically it’s C–C of the helix).
+* 1240–1270: amide III of collagen triple helix → `amide_III`
+* 1440–1450: CH2 bending of the glycine–proline–hydroxyproline backbone → `CH_bend`
+* 1660–1670: amide I (C=O stretch) → `amide_I`
+
+**Elastin** (more disordered protein, some lipid-like contribution) ([MDPI][1])
+
+* 850–860: Tyr / Pro ring modes (same `tyrosine_aromatic`)
+* ~1003: Phe ring → `phenylalanine_aromatic`
+* 1240–1300: amide III, but more mixed/random coil → `amide_III`
+* 1440–1455: CH2/CH3 bending from both protein + associated lipids → `CH_bend`
+* 1655–1665: amide I (α-helix / random coil mix) → `amide_I`
+
+**Keratin** (hair/stratum corneum protein, rich in cystine) ([MDPI][1])
+
+* ~830–860: Tyr doublet → `tyrosine_aromatic`
+* ~1003: very strong Phe ring → `phenylalanine_aromatic`
+* 1245–1270: amide III (α-helix of keratin) → `amide_III`
+* 1448–1455: CH2 bending (keratin side chains + lipids) → `CH_bend`
+* 1655: amide I (α-helix) → `amide_I`
+* 510–540 (outside our current ROI) would be S–S stretch of cystine (disulfide)
+
+**Triolein** (TAG lipid) ([MDPI][1])
+
+* ~1060–1128: C–C stretching in fatty acyl chains (will map to “other” in your function, but physically lipid backbone)
+* 1265–1305: =CH in-plane deformation / CH2 twisting of unsaturated chains → falls into your `amide_III` window but is really lipid CH modes.
+* 1440–1450: CH2 scissoring in long chains → `CH_bend`
+* 1655–1660: C=C stretch of olefinic bonds (cis-double bonds) → in your `amide_I` range but physically lipid C=C.
+* ~1740 (if present in the data): C=O ester stretch (outside current `BAND_RANGES`).
+
+**Ceramide** (sphingolipid) ([MDPI][1])
+
+* 1060–1130: C–C stretching of long chains (again “other”).
+* 1295–1310: CH2 twisting/wagging of saturated chains → will fall in `amide_III` window but is lipid CH.
+* 1430–1465: CH2 bending/scissoring of saturated chains → `CH_bend`.
+* 1650–1665: mainly C=C (if unsaturated) + some amide I from the headgroup → `amide_I`.
+
+**Nucleus** (DNA + histones)
+In 800–1800 cm⁻¹ ROI, expect:
+
+* ~785–790: ring breathing of cytosine/uracil + backbone modes (will map to “other”).
+* ~1092–1100: PO₂⁻ symmetric stretch of DNA/RNA backbone.
+* ~1335–1340: base ring stretching (A,G) / CH deformation.
+* ~1575–1585: ring stretching of bases (A,G). → will fall partly into `other_aromatic`.
+* 1655: amide I of histones (protein) + some base C=O.
+
+When nucleus peaks land in `other_aromatic` or `amide_I` in the code, physically they are **nucleic-acid base** modes plus histone amide I, not aromatic amino acids.
+
+**Melanin** ([ResearchGate][2])
+
+* ~1350: “D”-like band, disordered indole/quinone ring stretching and C–N. → falls into `other_aromatic` band.
+* ~1580–1590: “G”-like band, in-plane C=C stretching of aromatic/graphitic domains → also `other_aromatic`.
+* 1440–1450: CH modes of associated proteins / lipids → `CH_bend`.
+
+**Water** (residual liquid / bound water)
+In 800–1800 cm⁻¹ the *true* H–O–H bending is at ~1640 cm⁻¹; in tissues it overlaps amide I. So any broad background around 1630–1660 that `amide_I` bin picks up in the “water” basis is mostly H–O–H bending plus some protein leakage. The sharp OH stretch bands are way above your ROI.
+
+---
+
+* **Code-wise**: `assign_band_type(w0)` already applies this *same* set of windows for **all** components. 
+* **Physically**: we interpret the label differently depending on the basis:
+
+  * In proteins: `amide_III`, `amide_I`, `CH_bend`, `tyrosine_aromatic`, `phenylalanine_aromatic` are literal.
+  * In lipids: `amide_III` window mostly = CH₂ twisting; `amide_I` window mostly = C=C stretch.
+  * In nucleus: `other_aromatic` ≈ nucleic base modes; `amide_I` ≈ histone + some base C=O.
+  * In melanin: `other_aromatic` ≈ indole/graphitic C=C modes.
+
+[1]: https://www.mdpi.com/1422-0067/24/19/14748 "Multispectral Raman Differentiation of Malignant Skin Neoplasms In Vitro: Search for Specific Biomarkers and Optimal Wavelengths"
+[2]: https://www.researchgate.net/figure/a-Polarized-and-depolarized-Raman-spectra-of-synthetic-melanin-measured-using-the_fig7_8158501?utm_source=chatgpt.com "(a) Polarized and depolarized Raman spectra of synthetic ..."
+
+
+
+
+
+
